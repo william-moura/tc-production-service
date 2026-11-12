@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tc-production-config
+  labels:
+    app: tc-production-service
+data:
+  APP_NAME: "tc-production-service"
+  APP_ENV: "production"
+  APP_DEBUG: "false"
+  APP_URL: "http://tc-production-service"
+  LOG_CHANNEL: "stderr"
+  LOG_LEVEL: "info"
+  DB_CONNECTION: "mongodb"
+  MONGODB_DATABASE: "tc_production"
+  RABBITMQ_HOST: "rabbitmq-service"
+  RABBITMQ_PORT: "5672"
+  RABBITMQ_VHOST: "/"

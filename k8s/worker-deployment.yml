@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tc-production-worker
+  labels:
+    app: tc-production-service
+    component: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tc-production-service
+      component: worker
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: tc-production-service
+        component: worker
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: consumer
+          image: tc-production-service:latest
+          imagePullPolicy: IfNotPresent
+          command: ["php", "artisan", "production:consume", "--queue=all"]
+          envFrom:
+            - configMapRef:
+                name: tc-production-config
+            - secretRef:
+                name: tc-production-secret
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
