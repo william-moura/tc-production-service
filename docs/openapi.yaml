@@ -1,0 +1,281 @@
+openapi: 3.0.3
+info:
+  title: tc-production-service API
+  description: |
+    Microsserviço responsável pela esteira de execução, diagnóstico e reparo de veículos na oficina mecânica.
+    Integra-se via Saga Coreografada (RabbitMQ) consumindo `payment.approved` e publicando `repair.completed` ou `production.aborted`.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000
+    description: Ambiente Local
+  - url: http://tc-production-service
+    description: Cluster Kubernetes (Interno)
+
+tags:
+  - name: Production Orders
+    description: Gerenciamento da fila de produção e execução de reparos
+
+paths:
+  /api/v1/production-orders:
+    get:
+      tags:
+        - Production Orders
+      summary: Lista todas as ordens de produção
+      description: Retorna todas as ordens na fila da oficina, com filtro opcional por status.
+      parameters:
+        - name: status
+          in: query
+          required: false
+          description: Filtrar por estado da produção
+          schema:
+            type: string
+            enum: [RECEIVED, IN_PRODUCTION, COMPLETED, ABORTED]
+      responses:
+        '200':
+          description: Lista de ordens de produção retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProductionOrder'
+
+  /api/v1/production-orders/{id}:
+    get:
+      tags:
+        - Production Orders
+      summary: Consulta ordem de produção por ID (MongoDB ObjectId)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 64f1a2b3c4d5e6f7a8b9c0d1
+      responses:
+        '200':
+          description: Ordem de produção encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProductionOrder'
+        '404':
+          description: Ordem de produção não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/production-orders/work-order/{workOrderId}:
+    get:
+      tags:
+        - Production Orders
+      summary: Consulta ordem de produção pelo número da Ordem de Serviço (OS)
+      parameters:
+        - name: workOrderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 101
+      responses:
+        '200':
+          description: Ordem de produção encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProductionOrder'
+        '404':
+          description: Ordem de produção não encontrada para a OS informada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/production-orders/work-order/{workOrderId}/start:
+    post:
+      tags:
+        - Production Orders
+      summary: Inicia o reparo e atribui um mecânico
+      description: Transiciona o status de `RECEIVED` para `IN_PRODUCTION` e registra o horário de início.
+      parameters:
+        - name: workOrderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 101
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartRepairRequest'
+      responses:
+        '200':
+          description: Reparo iniciado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Repair started successfully.
+                  data:
+                    $ref: '#/components/schemas/ProductionOrder'
+        '404':
+          description: Ordem de produção não encontrada
+        '422':
+          description: Erro de validação ou transição de status inválida
+
+  /api/v1/production-orders/work-order/{workOrderId}/complete:
+    post:
+      tags:
+        - Production Orders
+      summary: Conclui o reparo do veículo
+      description: |
+        Transiciona o status de `IN_PRODUCTION` para `COMPLETED` e publica o evento `repair.completed`
+        na fila `queue.repair.completed` do RabbitMQ para atualizar o `tc-os-service`.
+      parameters:
+        - name: workOrderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 101
+      responses:
+        '200':
+          description: Reparo concluído com sucesso e evento publicado na Saga
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Repair completed successfully.
+                  data:
+                    $ref: '#/components/schemas/ProductionOrder'
+        '404':
+          description: Ordem de produção não encontrada
+        '422':
+          description: Transição de status inválida
+
+  /api/v1/production-orders/work-order/{workOrderId}/abort:
+    post:
+      tags:
+        - Production Orders
+      summary: Aborta a produção e aciona compensação da Saga
+      description: |
+        Transiciona o status para `ABORTED` e publica o evento `production.aborted` na fila
+        `queue.production.aborted` para rollback/estorno no `tc-billing-service` e cancelamento no `tc-os-service`.
+      parameters:
+        - name: workOrderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 101
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AbortProductionRequest'
+      responses:
+        '200':
+          description: Produção abortada e evento de compensação publicado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Production aborted successfully.
+                  data:
+                    $ref: '#/components/schemas/ProductionOrder'
+        '404':
+          description: Ordem de produção não encontrada
+        '422':
+          description: Motivo inválido ou ordem já finalizada
+
+components:
+  schemas:
+    ProductionOrder:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 64f1a2b3c4d5e6f7a8b9c0d1
+        work_order_id:
+          type: integer
+          example: 101
+        customer_id:
+          type: integer
+          example: 25
+        status:
+          type: string
+          enum: [RECEIVED, IN_PRODUCTION, COMPLETED, ABORTED]
+          example: IN_PRODUCTION
+        mechanic_id:
+          type: integer
+          nullable: true
+          example: 7
+        cancellation_reason:
+          type: string
+          nullable: true
+          example: null
+        received_at:
+          type: string
+          format: date-time
+          example: "2026-11-12T14:00:00+00:00"
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2026-11-12T14:15:00+00:00"
+        finished_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+
+    StartRepairRequest:
+      type: object
+      required:
+        - mechanic_id
+      properties:
+        mechanic_id:
+          type: integer
+          minimum: 1
+          example: 7
+
+    AbortProductionRequest:
+      type: object
+      required:
+        - reason
+      properties:
+        reason:
+          type: string
+          minLength: 3
+          maxLength: 500
+          example: Peça de reposição descontinuada pelo fabricante
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Production order for Work Order #101 not found.
