@@ -37,8 +37,8 @@ final class RabbitMQService
 
     public function getChannel(): AMQPChannel
     {
-        if ($this->channel === null \vert{}\vert{} !$this->channel->is_open()) {
-            if ($this->connection === null \vert{}\vert{} !$this->connection->isConnected()) {
+        if ($this->channel === null || !$this->channel->is_open()) {
+            if ($this->connection === null || !$this->connection->isConnected()) {
                 $this->connection = new AMQPStreamConnection($this->host,
                     $this->port,$this->user,
                     $this->password,$this->vhost

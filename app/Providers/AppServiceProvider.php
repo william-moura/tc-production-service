@@ -7,6 +7,7 @@ use App\Domain\Repositories\ProductionOrderRepositoryInterface;
 use App\Infrastructure\Messaging\Publishers\ProductionRabbitMQPublisher;
 use App\Infrastructure\Messaging\RabbitMQService;
 use App\Infrastructure\Repositories\ProductionOrderMongoRepository;
+use App\Presentation\Console\Commands\StartProductionConsumers;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                StartProductionConsumers::class,
+            ]);
+        }
     }
 }

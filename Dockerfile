@@ -32,10 +32,21 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-COPY . .
+# 1. Copia apenas os arquivos de dependência primeiro (cache eficiente)
+COPY composer.json composer.lock ./
 
-RUN git config --global --add safe.directory /var/www/html \
-    && composer install --no-interaction --prefer-dist --optimize-autoloader
+# 2. Instala pacotes sem disparar artisan package:discover
+RUN composer install \
+    --no-interaction \
+    --prefer-dist \
+    --no-scripts \
+    --no-autoloader
+
+# 3. Copia o restante do código e gera o autoload otimizado
+COPY . .
+RUN composer dump-autoload --optimize --no-scripts
+
+RUN git config --global --add safe.directory /var/www/html    
 
 RUN mkdir -p storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache
