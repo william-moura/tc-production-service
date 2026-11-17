@@ -36,7 +36,7 @@ final class StartProductionConsumersTest extends TestCase
         $consumer->expects($this->once())->method('handle');
 
         $command = new StartProductionConsumers;
-        $input = new ArrayInput(['--queue' => 'all']);
+        $input = new ArrayInput(['--queue' => 'all'], $command->getDefinition());
         $output = new BufferedOutput;
 
         $command->setInput($input);
@@ -53,7 +53,7 @@ final class StartProductionConsumersTest extends TestCase
         $consumer->expects($this->never())->method('handle');
 
         $command = new StartProductionConsumers;
-        $input = new ArrayInput(['--queue' => 'invalid-queue']);
+        $input = new ArrayInput(['--queue' => 'invalid-queue'], $command->getDefinition());
         $output = new BufferedOutput;
 
         $command->setInput($input);
