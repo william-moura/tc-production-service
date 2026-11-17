@@ -19,7 +19,7 @@ final class StartProductionConsumersTest extends TestCase
         $consumer->expects($this->once())->method('handle');
 
         $command = new StartProductionConsumers;
-        $input = new ArrayInput(['--queue' => 'payment_approved'], $command->getDefinition());
+        $input = new ArrayInput(['--queue' => 'payment-approved'], $command->getDefinition());
         $output = new BufferedOutput;
 
         $command->setInput($input);
