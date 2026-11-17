@@ -25,7 +25,7 @@ final class ProductionOrderMapper
             status: ProductionStatus::from((string) $model->status),
             mechanicId: $model->mechanic_id !== null ? (int) $model->mechanic_id : null,
             cancellationReason: $model->cancellation_reason,
-            receivedAt: self::parseDateTime($model->received_at) ?? new DateTimeImmutable(),
+            receivedAt: self::parseDateTime($model->received_at) ?? new DateTimeImmutable,
             startedAt: self::parseDateTime($model->started_at),
             finishedAt: self::parseDateTime($model->finished_at)
         );

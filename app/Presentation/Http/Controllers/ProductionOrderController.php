@@ -38,7 +38,7 @@ final class ProductionOrderController extends Controller
             : $this->repository->findAll();
 
         $data = array_map(
-            fn(ProductionOrder $order) => ProductionOrderOutputDto::fromDomain($order)->toArray(),
+            fn (ProductionOrder $order) => ProductionOrderOutputDto::fromDomain($order)->toArray(),
             $orders
         );
 

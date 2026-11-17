@@ -41,6 +41,7 @@ final class StartProductionConsumers extends Command
             return self::SUCCESS;
         } catch (Throwable $e) {
             $this->error("Critical error while consuming messages in production service: {$e->getMessage()}");
+
             return self::FAILURE;
         }
     }

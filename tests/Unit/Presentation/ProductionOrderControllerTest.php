@@ -13,7 +13,6 @@ use App\Domain\ValueObjects\ProductionStatus;
 use App\Domain\ValueObjects\WorkOrderId;
 use App\Presentation\Http\Controllers\ProductionOrderController;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 

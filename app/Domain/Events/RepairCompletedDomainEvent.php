@@ -11,7 +11,7 @@ final class RepairCompletedDomainEvent
     public function __construct(
         public readonly int $workOrderId,
         public readonly ?int $mechanicId,
-        public readonly DateTimeImmutable $occurredOn = new DateTimeImmutable()
+        public readonly DateTimeImmutable $occurredOn = new DateTimeImmutable
     ) {}
 
     /**

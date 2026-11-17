@@ -20,6 +20,7 @@ final class ProductionOrderMongoRepository implements ProductionOrderRepositoryI
 
             if ($model !== null) {
                 $model->update($documentData);
+
                 return ProductionOrderMapper::toDomain($model->fresh());
             }
         }
@@ -53,7 +54,7 @@ final class ProductionOrderMongoRepository implements ProductionOrderRepositoryI
     {
         return ProductionOrderMongoModel::where('status', $status)
             ->get()
-            ->map(fn(ProductionOrderMongoModel $model) => ProductionOrderMapper::toDomain($model))
+            ->map(fn (ProductionOrderMongoModel $model) => ProductionOrderMapper::toDomain($model))
             ->all();
     }
 
@@ -64,7 +65,7 @@ final class ProductionOrderMongoRepository implements ProductionOrderRepositoryI
     {
         return ProductionOrderMongoModel::orderBy('received_at', 'desc')
             ->get()
-            ->map(fn(ProductionOrderMongoModel $model) => ProductionOrderMapper::toDomain($model))
+            ->map(fn (ProductionOrderMongoModel $model) => ProductionOrderMapper::toDomain($model))
             ->all();
     }
 }

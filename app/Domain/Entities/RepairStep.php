@@ -33,7 +33,7 @@ final class RepairStep
     public function complete(): void
     {
         $this->completed = true;
-        $this->completedAt = new DateTimeImmutable();
+        $this->completedAt = new DateTimeImmutable;
     }
 
     public function getName(): string

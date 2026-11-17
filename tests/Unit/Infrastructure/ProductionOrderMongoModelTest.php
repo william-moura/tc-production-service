@@ -11,7 +11,7 @@ final class ProductionOrderMongoModelTest extends TestCase
 {
     public function test_should_have_correct_collection_and_connection_configurations(): void
     {
-        $model = new ProductionOrderMongoModel();
+        $model = new ProductionOrderMongoModel;
 
         $this->assertSame('mongodb', $model->getConnectionName());
         $this->assertSame('production_orders', $model->getTable());
@@ -21,7 +21,7 @@ final class ProductionOrderMongoModelTest extends TestCase
 
     public function test_should_contain_expected_fillable_attributes(): void
     {
-        $model = new ProductionOrderMongoModel();
+        $model = new ProductionOrderMongoModel;
 
         $expectedFillable = [
             'work_order_id',

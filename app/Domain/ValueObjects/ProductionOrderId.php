@@ -20,7 +20,7 @@ final class ProductionOrderId
         $isMongoObjectId = (bool) preg_match('/^[a-f\d]{24}$/i', $trimmed);
         $isUuid = (bool) preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $trimmed);
 
-        if (!$isMongoObjectId && !$isUuid) {
+        if (! $isMongoObjectId && ! $isUuid) {
             throw new InvalidArgumentException("Invalid Production Order ID format: '{$this->value}'. Must be a valid MongoDB ObjectId or UUID.");
         }
     }

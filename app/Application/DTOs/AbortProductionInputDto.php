@@ -14,7 +14,7 @@ final class AbortProductionInputDto
     /**
      * Instancia o DTO a partir de um array associativo (ex: vindo da requisição HTTP ou evento).
      *
-     * @param array{work_order_id: int|numeric, reason: string} $data
+     * @param  array{work_order_id: int|numeric, reason: string}  $data
      */
     public static function fromArray(array $data): self
     {

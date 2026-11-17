@@ -27,7 +27,7 @@ final class StartRepairUseCaseTest extends TestCase
 
         $repository->expects($this->once())
             ->method('save')
-            ->willReturnCallback(fn(ProductionOrder $saved) => $saved);
+            ->willReturnCallback(fn (ProductionOrder $saved) => $saved);
 
         $useCase = new StartRepairUseCase($repository);
         $dto = new StartRepairInputDto(workOrderId: 101, mechanicId: 12);

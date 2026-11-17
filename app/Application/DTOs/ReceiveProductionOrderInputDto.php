@@ -14,7 +14,7 @@ final class ReceiveProductionOrderInputDto
     /**
      * Instancia o DTO a partir do payload recebido da fila RabbitMQ (queue.payment.approved).
      *
-     * @param array{work_order_id: int|numeric, customer_id: int|numeric} $payload
+     * @param  array{work_order_id: int|numeric, customer_id: int|numeric}  $payload
      */
     public static function fromPayload(array $payload): self
     {
