@@ -13,8 +13,8 @@ use App\Domain\ValueObjects\ProductionStatus;
 use App\Domain\ValueObjects\WorkOrderId;
 use App\Presentation\Http\Controllers\ProductionOrderController;
 use Illuminate\Http\JsonResponse;
-use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\TestCase;
 
 final class ProductionOrderControllerTest extends TestCase
 {
