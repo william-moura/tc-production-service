@@ -9,7 +9,7 @@ use App\Domain\ValueObjects\ProductionStatus;
 use App\Domain\ValueObjects\WorkOrderId;
 use DateTimeImmutable;
 
-final class ProductionOrder
+class ProductionOrder
 {
     public function __construct(
         private ?string $id,

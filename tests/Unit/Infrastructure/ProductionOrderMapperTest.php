@@ -11,7 +11,7 @@ use App\Infrastructure\Persistence\Mappers\ProductionOrderMapper;
 use App\Infrastructure\Persistence\Models\ProductionOrderMongoModel;
 use DateTimeImmutable;
 use MongoDB\BSON\UTCDateTime;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 final class ProductionOrderMapperTest extends TestCase
 {

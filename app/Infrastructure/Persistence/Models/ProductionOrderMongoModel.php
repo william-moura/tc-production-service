@@ -25,6 +25,8 @@ final class ProductionOrderMongoModel extends Model
 {
     protected $connection = 'mongodb';
 
+    protected $table = 'production_orders';
+
     protected $collection = 'production_orders';
 
     protected $primaryKey = '_id';
