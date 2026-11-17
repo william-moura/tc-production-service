@@ -9,7 +9,7 @@ use App\Domain\ValueObjects\ProductionStatus;
 use App\Domain\ValueObjects\WorkOrderId;
 use DateTimeImmutable;
 
-final class ProductionOrder
+class ProductionOrder
 {
     public function __construct(
         private ?string $id,
@@ -18,7 +18,7 @@ final class ProductionOrder
         private ProductionStatus $status,
         private ?int $mechanicId = null,
         private ?string $cancellationReason = null,
-        private readonly DateTimeImmutable $receivedAt = new DateTimeImmutable(),
+        private readonly DateTimeImmutable $receivedAt = new DateTimeImmutable,
         private ?DateTimeImmutable $startedAt = null,
         private ?DateTimeImmutable $finishedAt = null
     ) {}
@@ -44,7 +44,7 @@ final class ProductionOrder
 
         $this->mechanicId = $mechanicId;
         $this->status = ProductionStatus::IN_PRODUCTION;
-        $this->startedAt = new DateTimeImmutable();
+        $this->startedAt = new DateTimeImmutable;
     }
 
     public function complete(): void
@@ -57,7 +57,7 @@ final class ProductionOrder
         }
 
         $this->status = ProductionStatus::COMPLETED;
-        $this->finishedAt = new DateTimeImmutable();
+        $this->finishedAt = new DateTimeImmutable;
     }
 
     public function abort(string $reason): void
@@ -68,16 +68,51 @@ final class ProductionOrder
 
         $this->status = ProductionStatus::ABORTED;
         $this->cancellationReason = $reason;
-        $this->finishedAt = new DateTimeImmutable();
+        $this->finishedAt = new DateTimeImmutable;
     }
 
-    public function getId(): ?string { return $this->id; }
-    public function getWorkOrderId(): WorkOrderId { return $this->workOrderId; }
-    public function getCustomerId(): int { return $this->customerId; }
-    public function getStatus(): ProductionStatus { return $this->status; }
-    public function getMechanicId(): ?int { return $this->mechanicId; }
-    public function getCancellationReason(): ?string { return $this->cancellationReason; }
-    public function getReceivedAt(): DateTimeImmutable { return $this->receivedAt; }
-    public function getStartedAt(): ?DateTimeImmutable { return $this->startedAt; }
-    public function getFinishedAt(): ?DateTimeImmutable { return $this->finishedAt; }
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
+
+    public function getWorkOrderId(): WorkOrderId
+    {
+        return $this->workOrderId;
+    }
+
+    public function getCustomerId(): int
+    {
+        return $this->customerId;
+    }
+
+    public function getStatus(): ProductionStatus
+    {
+        return $this->status;
+    }
+
+    public function getMechanicId(): ?int
+    {
+        return $this->mechanicId;
+    }
+
+    public function getCancellationReason(): ?string
+    {
+        return $this->cancellationReason;
+    }
+
+    public function getReceivedAt(): DateTimeImmutable
+    {
+        return $this->receivedAt;
+    }
+
+    public function getStartedAt(): ?DateTimeImmutable
+    {
+        return $this->startedAt;
+    }
+
+    public function getFinishedAt(): ?DateTimeImmutable
+    {
+        return $this->finishedAt;
+    }
 }

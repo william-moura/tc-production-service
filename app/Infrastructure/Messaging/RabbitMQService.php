@@ -11,9 +11,10 @@ use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-final class RabbitMQService
+class RabbitMQService
 {
     private ?AMQPStreamConnection $connection = null;
+
     private ?AMQPChannel $channel = null;
 
     public function __construct(
@@ -37,15 +38,15 @@ final class RabbitMQService
 
     public function getChannel(): AMQPChannel
     {
-        if ($this->channel === null \vert{}\vert{} !$this->channel->is_open()) {
-            if ($this->connection === null \vert{}\vert{} !$this->connection->isConnected()) {
+        if ($this->channel === null || ! $this->channel->is_open()) {
+            if ($this->connection === null || ! $this->connection->isConnected()) {
                 $this->connection = new AMQPStreamConnection($this->host,
-                    $this->port,$this->user,
-                    $this->password,$this->vhost
+                    $this->port, $this->user,
+                    $this->password, $this->vhost
                 );
             }
 
-            $this->channel =$this->connection->channel();
+            $this->channel = $this->connection->channel();
         }
 
         return $this->channel;
@@ -54,11 +55,11 @@ final class RabbitMQService
     /**
      * Declara uma fila persistente e publica o payload codificado em JSON.
      *
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
-    public function publish(string $queue, array$payload): void
+    public function publish(string $queue, array $payload): void
     {
-        $channel =$this->getChannel();
+        $channel = $this->getChannel();
 
         $channel->queue_declare(
             queue: $queue,
@@ -75,15 +76,15 @@ final class RabbitMQService
             'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT,
         ]);
 
-        $channel->basic_publish($message, '',$queue);
+        $channel->basic_publish($message, '', $queue);
     }
 
     /**
      * Consome mensagens da fila informada com prefetch count 1.
      */
-    public function consume(string $queue, Closure$callback): void
+    public function consume(string $queue, Closure $callback): void
     {
-        $channel =$this->getChannel();
+        $channel = $this->getChannel();
 
         $channel->queue_declare(
             queue: $queue,
@@ -117,10 +118,19 @@ final class RabbitMQService
 
     public function close(): void
     {
-        if ($this->channel !== null && $this->channel->is_open()) {$this->channel->close();
-        }
+        try {
+            if ($this->channel !== null && $this->channel->getChannelId() !== null) {
+                $this->channel->close();
+            }
 
-        if ($this->connection !== null && $this->connection->isConnected()) {$this->connection->close();
+            if ($this->connection !== null && $this->connection->isConnected()) {
+                $this->connection->close();
+            }
+        } catch (\Throwable $e) {
+            // Ignora falhas de encerramento caso o socket já tenha sido fechado
+        } finally {
+            $this->channel = null;
+            $this->connection = null;
         }
     }
 

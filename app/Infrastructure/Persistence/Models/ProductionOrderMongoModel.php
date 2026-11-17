@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Models;
 
+use Illuminate\Support\Carbon;
+use MongoDB\BSON\UTCDateTime;
 use MongoDB\Laravel\Eloquent\Model;
 
 /**
@@ -13,16 +15,18 @@ use MongoDB\Laravel\Eloquent\Model;
  * @property string $status
  * @property int|null $mechanic_id
  * @property string|null $cancellation_reason
- * @property \MongoDB\BSON\UTCDateTime|null $received_at
- * @property \MongoDB\BSON\UTCDateTime|null $started_at
- * @property \MongoDB\BSON\UTCDateTime|null $finished_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property UTCDateTime|null $received_at
+ * @property UTCDateTime|null $started_at
+ * @property UTCDateTime|null $finished_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  */
 final class ProductionOrderMongoModel extends Model
 {
     protected $connection = 'mongodb';
-    
+
+    protected $table = 'production_orders';
+
     protected $collection = 'production_orders';
 
     protected $primaryKey = '_id';

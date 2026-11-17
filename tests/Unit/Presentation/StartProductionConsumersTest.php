@@ -6,6 +6,7 @@ namespace Tests\Unit\Presentation;
 
 use App\Infrastructure\Messaging\Consumers\PaymentApprovedConsumer;
 use App\Presentation\Console\Commands\StartProductionConsumers;
+use Illuminate\Console\OutputStyle;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -17,12 +18,12 @@ final class StartProductionConsumersTest extends TestCase
         $consumer = $this->createMock(PaymentApprovedConsumer::class);
         $consumer->expects($this->once())->method('handle');
 
-        $command = new StartProductionConsumers();
-        $input = new ArrayInput(['--queue' => 'payment-approved']);
-        $output = new BufferedOutput();
+        $command = new StartProductionConsumers;
+        $input = new ArrayInput(['--queue' => 'payment-approved'], $command->getDefinition());
+        $output = new BufferedOutput;
 
         $command->setInput($input);
-        $command->setOutput(new \Illuminate\Console\OutputStyle($input, $output));
+        $command->setOutput(new OutputStyle($input, $output));
 
         $exitCode = $command->handle($consumer);
 
@@ -34,12 +35,12 @@ final class StartProductionConsumersTest extends TestCase
         $consumer = $this->createMock(PaymentApprovedConsumer::class);
         $consumer->expects($this->once())->method('handle');
 
-        $command = new StartProductionConsumers();
-        $input = new ArrayInput(['--queue' => 'all']);
-        $output = new BufferedOutput();
+        $command = new StartProductionConsumers;
+        $input = new ArrayInput(['--queue' => 'all'], $command->getDefinition());
+        $output = new BufferedOutput;
 
         $command->setInput($input);
-        $command->setOutput(new \Illuminate\Console\OutputStyle($input, $output));
+        $command->setOutput(new OutputStyle($input, $output));
 
         $exitCode = $command->handle($consumer);
 
@@ -51,12 +52,12 @@ final class StartProductionConsumersTest extends TestCase
         $consumer = $this->createMock(PaymentApprovedConsumer::class);
         $consumer->expects($this->never())->method('handle');
 
-        $command = new StartProductionConsumers();
-        $input = new ArrayInput(['--queue' => 'invalid-queue']);
-        $output = new BufferedOutput();
+        $command = new StartProductionConsumers;
+        $input = new ArrayInput(['--queue' => 'invalid-queue'], $command->getDefinition());
+        $output = new BufferedOutput;
 
         $command->setInput($input);
-        $command->setOutput(new \Illuminate\Console\OutputStyle($input, $output));
+        $command->setOutput(new OutputStyle($input, $output));
 
         $exitCode = $command->handle($consumer);
 

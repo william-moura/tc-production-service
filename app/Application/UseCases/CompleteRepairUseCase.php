@@ -9,7 +9,7 @@ use App\Application\Services\MessagePublisherInterface;
 use App\Domain\Exceptions\ProductionOrderNotFoundException;
 use App\Domain\Repositories\ProductionOrderRepositoryInterface;
 
-final class CompleteRepairUseCase
+class CompleteRepairUseCase
 {
     public function __construct(
         private readonly ProductionOrderRepositoryInterface $repository,

@@ -14,7 +14,7 @@ final class StartRepairInputDto
     /**
      * Cria a instância a partir dos parâmetros da requisição HTTP.
      *
-     * @param array{work_order_id?: int|numeric, mechanic_id: int|numeric} $data
+     * @param  array{work_order_id?: int|numeric, mechanic_id: int|numeric}  $data
      */
     public static function fromRequest(int $workOrderId, array $data): self
     {

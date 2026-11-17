@@ -11,7 +11,7 @@ use App\Infrastructure\Persistence\Mappers\ProductionOrderMapper;
 use App\Infrastructure\Persistence\Models\ProductionOrderMongoModel;
 use DateTimeImmutable;
 use MongoDB\BSON\UTCDateTime;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 final class ProductionOrderMapperTest extends TestCase
 {
@@ -44,7 +44,7 @@ final class ProductionOrderMapperTest extends TestCase
 
     public function test_should_map_mongo_model_to_domain_entity(): void
     {
-        $model = new ProductionOrderMongoModel();
+        $model = new ProductionOrderMongoModel;
         $model->_id = '64f1a2b3c4d5e6f7a8b9c0d1';
         $model->work_order_id = 100;
         $model->customer_id = 25;

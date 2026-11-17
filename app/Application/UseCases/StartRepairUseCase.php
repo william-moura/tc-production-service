@@ -18,7 +18,6 @@ final class StartRepairUseCase
     public function execute(StartRepairInputDto $dto): ProductionOrderOutputDto
     {
         $order = $this->repository->findByWorkOrderId($dto->workOrderId);
-
         if ($order === null) {
             throw ProductionOrderNotFoundException::forWorkOrder($dto->workOrderId);
         }
