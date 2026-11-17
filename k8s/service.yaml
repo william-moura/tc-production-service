@@ -5,7 +5,7 @@ metadata:
   labels:
     app: tc-production-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: tc-production-service
     component: api
@@ -14,3 +14,4 @@ spec:
       protocol: TCP
       port: 80
       targetPort: http
+      nodePort: 30083
